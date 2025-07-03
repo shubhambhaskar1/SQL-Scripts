@@ -14,6 +14,8 @@ TEMP_STUDENTS AS(
 
 TEMP_S_STU_X AS(
     SELECT * FROM $source_lakehouse_name.dbo.PS_S_STU_X
+    WHERE _META_SCHOOL_YEAR >= '{SchoolYearLowerLimit}'
+    AND _META_SCHOOL_YEAR <= '{SchoolYearUpperLimit}' 
 ),
 
 SELECT 
