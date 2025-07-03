@@ -46,7 +46,7 @@ STUDENTRACE
 
 SELECT
     stu.state_studentnumber                                                                                             AS studentUniqueId,
-    stu.state_districtid                                                                                                AS educationOrganizationId,  -- Assuming student table has district_id
+    '101912'                                                                                                            AS educationOrganizationId,  -- Assuming student table has district_id
     null                                                                                                                AS addressTypeDescriptor     -- Not sure which to put out of 01 Home and 04 Mailing
     COALESCE(NULLIF(stu.street, ''), NULLIF(stu.mailing_street, ''))                                                    AS streetNumberName,
     COALESCE(
@@ -62,8 +62,8 @@ SELECT
     '01'                                                                                                                AS electronicMailTypeDescriptor, -- Home/Personal
     COALESCE(NULLIF(stu.gender, ''), NULLIF(stu_core.pscore_legal_gender, ''))                                          AS sexDescriptor,
     stu.fedethnicity                                                                                                    AS hispanicLatinoEthnicity,
-    stu_core.primarylanguage                                                                                            AS homeLanguageCode,                  -- Keeping this as of now dont know how to write this
-    stu_core.secondarylanguage                                                                                          AS studentLanguageCode,
+    stu_core.primarylanguage                                                                                            AS homeLanguageDescriptor,                  
+    stu_core.secondarylanguage                                                                                          AS studentLanguageDescriptor,
     stu_r.RaceCd                                                                                                        AS raceDescriptor,
     econ.E0785_ECON_DISADVANTAGED AS economicDisadvantageDescriptor,
     esl.E0790_LEP_Indicator AS emergentBilingualIndicatorDescriptor
