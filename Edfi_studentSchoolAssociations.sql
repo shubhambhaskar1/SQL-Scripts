@@ -39,11 +39,3 @@ SELECT
 FROM TEMP_S_TX_STU_SCHOOL_ENR_C enr
 LEFT JOIN TEMP_STUDENTS stu ON enr.StudentsDCID = stu.DCID
 LEFT JOIN TEMP_S_STU_X stux ON enr.StudentsDCID = stux.StudentsDCID
-
-
-
-            
-            
-
-        cacheable: true
-            
