@@ -65,9 +65,7 @@ SELECT
     stu_core.primarylanguage                                                                                            AS homeLanguageCode,                  -- Keeping this as of now dont know how to write this
     stu_core.secondarylanguage                                                                                          AS studentLanguageCode,
     stu_r.RaceCd                                                                                                        AS raceDescriptor,
-    -- Economic Disadvantage
     econ.E0785_ECON_DISADVANTAGED AS economicDisadvantageDescriptor,
-    -- Emergent Bilingual
     esl.E0790_LEP_Indicator AS emergentBilingualIndicatorDescriptor
 FROM TEMP_STUDENTS stu
 LEFT JOIN TEMP_STU_X stux ON stu.DCID = stux.StudentsDCID
