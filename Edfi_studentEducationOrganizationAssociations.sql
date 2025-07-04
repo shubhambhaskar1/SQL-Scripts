@@ -42,11 +42,10 @@ TEMP_STUDENTRACE AS(
     AND _META_SCHOOL_YEAR <= '{SchoolYearUpperLimit}'
 ),
 
-STUDENTRACE
 
 SELECT
     stu.state_studentnumber                                                                                             AS studentUniqueId,
-    '101912'                                                                                                            AS educationOrganizationId,  -- Assuming student table has district_id
+    '101912'                                                                                                            AS educationOrganizationId,
     null                                                                                                                AS addressTypeDescriptor     -- Not sure which to put out of 01 Home and 04 Mailing
     COALESCE(NULLIF(stu.street, ''), NULLIF(stu.mailing_street, ''))                                                    AS streetNumberName,
     COALESCE(
@@ -58,12 +57,15 @@ SELECT
     COALESCE(NULLIF(stu.zip, ''), NULLIF(stu.mailing_zip, ''))                                                          AS postalCode,
     'Twelfth grade'                                                                                                     AS cohortYearTypeDescriptor,
     coasesce(studentcorefields.graduation_year, s.classof)                                                              AS schoolYear,
-    null                                                                                                                AS electronicMailAddress,
-    '01'                                                                                                                AS electronicMailTypeDescriptor, -- Home/Personal
+    null                                                                                                                AS electronicMailAddress,      -- Did not found any table called - PSM_STUDENTCONTACT.email
+    null                                                                                                                AS electronicMailTypeDescriptor, -- -- Not sure about what to take as a input/Source Home/Personal
     COALESCE(NULLIF(stu.gender, ''), NULLIF(stu_core.pscore_legal_gender, ''))                                          AS sexDescriptor,
     stu.fedethnicity                                                                                                    AS hispanicLatinoEthnicity,
-    stu_core.primarylanguage                                                                                            AS homeLanguageDescriptor,                  
-    stu_core.secondarylanguage                                                                                          AS studentLanguageDescriptor,
+    COALESCE(NULLIF(stu_core.primarylanguage, ''), NULLIF(stu_core.secondarylanguage, ''))                              AS LanguageDescriptor,
+    CASE 
+      WHEN studentcorefields.primarylanguage is not null THEN 01 
+      ELSE 02 
+    END                                                                                                                 AS languageUseDescriptor,
     stu_r.RaceCd                                                                                                        AS raceDescriptor,
     econ.E0785_ECON_DISADVANTAGED AS economicDisadvantageDescriptor,
     esl.E0790_LEP_Indicator AS emergentBilingualIndicatorDescriptor
