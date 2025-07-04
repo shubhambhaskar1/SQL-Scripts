@@ -12,7 +12,7 @@ TEMP_STOREDGRADES AS(
     AND _META_SCHOOL_YEAR <= '{SchoolYearUpperLimit}'
 ),
 
-TEMP_CC
+TEMP_CC AS(
     SELECT * FROM $source_lakehouse_name.dbo.PS_CC
     WHERE META_SCHOOL_YEAR >= '{SchoolYearLowerLimit}'
     AND _META_SCHOOL_YEAR <= '{SchoolYearUpperLimit}'
@@ -24,7 +24,7 @@ TEMP_SECTIONS AS(
     AND _META_SCHOOL_YEAR <= '{SchoolYearUpperLimit}'
 ),
 
-TEMP_COURSES
+TEMP_COURSES AS(
     SELECT * FROM $source_lakehouse_name.dbo.PS_COURSES
     WHERE META_SCHOOL_YEAR >= '{SchoolYearLowerLimit}'
     AND _META_SCHOOL_YEAR <= '{SchoolYearUpperLimit}'
@@ -36,7 +36,7 @@ TEMP_TERMS AS(
     AND _META_SCHOOL_YEAR <= '{SchoolYearUpperLimit}'
 ),
 
-TEMP_GRADESCALEITEM
+TEMP_GRADESCALEITEM AS(
     SELECT * FROM $source_lakehouse_name.dbo.PS_GRADESCALEITEM
     WHERE META_SCHOOL_YEAR >= '{SchoolYearLowerLimit}'
     AND _META_SCHOOL_YEAR <= '{SchoolYearUpperLimit}'
@@ -48,7 +48,7 @@ TEMP_COURSESCOREFIELDS AS(
     AND _META_SCHOOL_YEAR <= '{SchoolYearUpperLimit}'
 ),
 
-TEMP_S_TX_TRM_C
+TEMP_S_TX_TRM_C AS(
     SELECT * FROM $source_lakehouse_name.dbo.PS_S_TX_TRM_C
     WHERE META_SCHOOL_YEAR >= '{SchoolYearLowerLimit}'
     AND _META_SCHOOL_YEAR <= '{SchoolYearUpperLimit}'
@@ -60,11 +60,29 @@ TEMP_S_TX_GSI_X AS(
     AND _META_SCHOOL_YEAR <= '{SchoolYearUpperLimit}'
 ),
 
-TEMP_S_TX_SERVICE_ID_S
+TEMP_S_TX_SERVICE_ID_S AS(
     SELECT * FROM $source_lakehouse_name.dbo.PS_S_TX_SERVICE_ID_S
     WHERE META_SCHOOL_YEAR >= '{SchoolYearLowerLimit}'
     AND _META_SCHOOL_YEAR <= '{SchoolYearUpperLimit}'
 ),
+
+TEMP_S_TX_SGR_X AS(
+    SELECT * FROM $source_lakehouse_name.dbo.PS_S_TX_SGR_X
+    WHERE META_SCHOOL_YEAR >= '{SchoolYearLowerLimit}'
+    AND _META_SCHOOL_YEAR <= '{SchoolYearUpperLimit}'
+),
+
+TEMP_S_TX_SEC_X AS(
+    SELECT * FROM $source_lakehouse_name.dbo.PS_S_TX_SEC_X
+    WHERE META_SCHOOL_YEAR >= '{SchoolYearLowerLimit}'
+    AND _META_SCHOOL_YEAR <= '{SchoolYearUpperLimit}'
+),
+
+TEMP_S_TX_CRS_X AS(
+    SELECT * FROM $source_lakehouse_name.dbo.PS_S_TX_CRS_X
+    WHERE META_SCHOOL_YEAR >= '{SchoolYearLowerLimit}'
+    AND _META_SCHOOL_YEAR <= '{SchoolYearUpperLimit}'
+)
 
 SELECT
     sg.studentid                                                                                                      AS studentUniqueId,
@@ -102,17 +120,17 @@ SELECT
                 ELSE '13'
             END
     END                                                                                                                AS courseAttemptResultDescriptor,
-    sg.grade_level AS whenTakenGradeLevel,
-    sg.grade AS finalLetterGradeEarned,
-    sg.percent AS finalNumericGradeEarned,
-    sg.potentialcrhrs AS attemptedCredits,
-    sg.earnedcrhrs AS earnedCredits,
-    crs.course_name AS courseTitle,
-    crs.course_number AS alternativeCourseCode,
+    sg.grade_level                                                                                                     AS whenTakenGradeLevel,
+    sg.grade                                                                                                           AS finalLetterGradeEarned,
+    sg.percent                                                                                                         AS finalNumericGradeEarned,
+    sg.potentialcrhrs                                                                                                  AS attemptedCredits,
+    sg.earnedcrhrs                                                                                                     AS earnedCredits,
+    crs.course_name                                                                                                    AS courseTitle,
+    crs.course_number                                                                                                  AS alternativeCourseCode,
     -- TX Extensions
-    COALESCE(sgx.College_Credit_Hours, secx.E1081_College_Credit, crsx.E1081)                                         AS tx_collegeCreditHours,
-    COALESCE(sgx.Dual_Credit, secx.E1011_Dual_Credit, crsx.E1011_Dual_Credit)                                         AS tx_dualCreditIndicator,
-    COALESCE(sgx.ATC_Indicator_Code, secx.E1058_ATC_Indicator, crsx.E1058_ATC_Indicator)                              AS tx_atcIndicator
+    COALESCE(sgx.College_Credit_Hours, secx.E1081_College_Credit, crsx.E1081)                                          AS tx_collegeCreditHours,
+    COALESCE(sgx.Dual_Credit, secx.E1011_Dual_Credit, crsx.E1011_Dual_Credit)                                          AS tx_dualCreditIndicator,
+    COALESCE(sgx.ATC_Indicator_Code, secx.E1058_ATC_Indicator, crsx.E1058_ATC_Indicator)                               AS tx_atcIndicator
 FROM TEMP_STOREDGRADES sg
 LEFT JOIN TEMP_S_TX_SGR_X sgx ON sg.id = sgx.storedgradeid
 LEFT JOIN TEMP_STUDENTS s ON sg.studentid = s.dcid
